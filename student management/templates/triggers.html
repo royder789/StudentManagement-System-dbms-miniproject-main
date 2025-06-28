@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% block title %}
+Triggers
+{% endblock title %}
+
+{% block style %}
+<style>
+  .triggers-container {
+    background: #FFFFFF; /* White */
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+    transition: all 0.3s ease;
+  }
+  .triggers-container:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+  .table-header {
+    position: relative;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .table-header h3 {
+    font-weight: 700;
+    color: #0F766E; /* Teal */
+    position: relative;
+    display: inline-block;
+  }
+  .table-header h3::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #0F766E, #F59E0B); /* Teal to Amber */
+    border-radius: 3px;
+  }
+  .custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 15px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  .custom-table thead {
+    background: linear-gradient(135deg, #0F766E, #14B8A6); /* Teal gradient */
+    color: white;
+  }
+  .custom-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .custom-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #E5E7EB; /* Light gray */
+    color: #1F2937; /* Slate */
+  }
+  .custom-table tbody tr {
+    transition: all 0.3s ease;
+    background: #FFFFFF;
+  }
+  .custom-table tbody tr:hover {
+    background: #F9FAFB; /* Very light gray */
+    transform: translateX(5px);
+  }
+  .custom-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .alert {
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .alert-success {
+    background: #ECFDF5;
+    border-left: 4px solid #10B981;
+    color: #065F46;
+  }
+  .alert-danger {
+    background: #FEF2F2;
+    border-left: 4px solid #EF4444;
+    color: #991B1B;
+  }
+  .btn-close {
+    filter: brightness(0) saturate(100%) invert(19%) sepia(9%) saturate(2925%) hue-rotate(177deg) brightness(93%) contrast(89%);
+  }
+  .action-cell {
+    font-weight: 500;
+  }
+  .action-cell.insert {
+    color: #10B981; /* Green */
+  }
+  .action-cell.delete {
+    color: #EF4444; /* Red */
+  }
+  .action-cell.update {
+    color: #F59E0B; /* Amber */
+  }
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="container py-4">
+  <div class="triggers-container" data-aos="fade-up">
+    <div class="table-header">
+      <h3><span>Student Triggers Records</span></h3>
+    </div>
+
+    {% with messages=get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+              <span>{{ message }}</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Trigger ID</th>
+            <th>Roll Number</th>
+            <th>Action</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for post in query %}
+            <tr>
+              <td>{{ post.tid }}</td>
+              <td>{{ post.rollno }}</td>
+              <td class="action-cell {{ post.action|lower }}">
+                {% if post.action == 'INSERT' %}
+                  <i class="fas fa-plus-circle me-2"></i>
+                {% elif post.action == 'DELETE' %}
+                  <i class="fas fa-trash-alt me-2"></i>
+                {% else %}
+                  <i class="fas fa-edit me-2"></i>
+                {% endif %}
+                {{ post.action }}
+              </td>
+              <td>{{ post.timestamp }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to table rows
+    const rows = document.querySelectorAll('.custom-table tbody tr');
+    rows.forEach((row, index) => {
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(-20px)';
+      row.style.transition = `all 0.3s ease ${index * 0.05}s`;
+      
+      // Trigger animation after a short delay
+      setTimeout(() => {
+        row.style.opacity = '1';
+        row.style.transform = 'translateX(0)';
+      }, 100);
+    });
+  });
+</script>
+{% endblock body %}

@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% block title %}
+Add Students
+{% endblock title %}
+
+{% block style %}
+<style>
+  .student-form-container {
+    background: #FFFFFF; /* White */
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .student-form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  }
+  .form-header {
+    position: relative;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  .form-header h3 {
+    font-weight: 700;
+    color: #0F766E; /* Teal */
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+  }
+  .form-header h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #0F766E, #F59E0B); /* Teal to Amber */
+    border-radius: 2px;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #1F2937; /* Slate */
+  }
+  .form-control {
+    background: #F9FAFB; /* Light Gray White */
+    border: 1px solid #E5E7EB;
+    color: #1F2937; /* Slate */
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  .form-control:focus {
+    background: #FFFFFF;
+    box-shadow: 0 0 0 0.25rem rgba(15, 118, 110, 0.25); /* Teal with opacity */
+    border-color: #0F766E; /* Teal */
+    color: #1F2937; /* Slate */
+  }
+  .form-control::placeholder {
+    color: #9CA3AF; /* Gray */
+  }
+  textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+  }
+  select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231F2937' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px 12px;
+  }
+  .submit-btn {
+    background: linear-gradient(135deg, #0F766E, #14B8A6); /* Teal gradient */
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 14px;
+    border-radius: 50px;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3); /* Teal shadow */
+  }
+  .submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(15, 118, 110, 0.4); /* Teal shadow */
+    background: linear-gradient(135deg, #0D9488, #0F766E); /* Darker teal gradient */
+  }
+  .alert {
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .alert-success {
+    background: #ECFDF5;
+    border-left: 4px solid #10B981;
+    color: #065F46;
+  }
+  .alert-danger {
+    background: #FEF2F2;
+    border-left: 4px solid #EF4444;
+    color: #991B1B;
+  }
+  .btn-close {
+    filter: brightness(0) saturate(100%) invert(19%) sepia(9%) saturate(2925%) hue-rotate(177deg) brightness(93%) contrast(89%);
+  }
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="student-form-container" data-aos="fade-up">
+        <div class="form-header">
+          <h3><span>Add Student Details</span></h3>
+        </div>
+
+        {% with messages=get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{category}} alert-dismissible fade show">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                  <span>{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="/addstudent" method="post">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="rollno">Roll Number</label>
+                <input type="text" class="form-control" name="rollno" id="rollno" placeholder="Enter roll number" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="sname">Student Name</label>
+                <input type="text" class="form-control" name="sname" id="sname" placeholder="Enter student name" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="sem">Semester</label>
+                <input type="number" class="form-control" name="sem" id="sem" min="1" max="8" placeholder="Enter semester" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="gender">Gender</label>
+                <select class="form-control" id="gender" name="gender" required>
+                  <option value="" disabled selected>Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="branch">Branch</label>
+                <select class="form-control" id="branch" name="branch" required>
+                  <option value="" disabled selected>Select Branch</option>
+                  {% for d in dept %}
+                    <option value="{{d.branch}}">{{d.branch}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="Enter email address" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="num">Phone Number</label>
+                <input type="tel" class="form-control" name="num" id="num" placeholder="Enter phone number" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea class="form-control" name="address" id="address" placeholder="Enter full address" rows="3" required></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-user-plus me-2"></i> Add Student Record
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add input validation and interactivity
+  document.addEventListener('DOMContentLoaded', function() {
+    // Format phone number input
+    const phoneInput = document.getElementById('num');
+    phoneInput.addEventListener('input', function() {
+      this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    // Add floating labels effect
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+      });
+      input.addEventListener('blur', function() {
+        if (!this.value) {
+          this.parentElement.classList.remove('focused');
+        }
+      });
+      // Initialize focused state if value exists
+      if (input.value) {
+        input.parentElement.classList.add('focused');
+      }
+    });
+  });
+</script>
+{% endblock body %}

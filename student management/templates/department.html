@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block title %}
+Add Department
+{% endblock title %}
+
+{% block style %}
+<style>
+  .department-container {
+    background: #FFFFFF; /* White */
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  .department-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+  .form-header {
+    position: relative;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .form-header h3 {
+    font-weight: 700;
+    color: #0F766E; /* Teal */
+    position: relative;
+    display: inline-block;
+  }
+  .form-header h3::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #0F766E, #F59E0B); /* Teal to Amber */
+    border-radius: 3px;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #1F2937; /* Slate */
+  }
+  .form-control {
+    background: #F9FAFB; /* Light Gray White */
+    border: 1px solid #E5E7EB;
+    color: #1F2937; /* Slate */
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  .form-control:focus {
+    background: #FFFFFF;
+    box-shadow: 0 0 0 0.25rem rgba(15, 118, 110, 0.25); /* Teal with opacity */
+    border-color: #0F766E; /* Teal */
+    color: #1F2937; /* Slate */
+  }
+  .form-control::placeholder {
+    color: #9CA3AF; /* Gray */
+  }
+  .submit-btn {
+    background: linear-gradient(135deg, #0F766E, #14B8A6); /* Teal gradient */
+    border: none;
+    color: #FFFFFF; /* White */
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 50px;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3); /* Teal shadow */
+  }
+  .submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(15, 118, 110, 0.4); /* Teal shadow */
+    background: linear-gradient(135deg, #0D9488, #0F766E); /* Darker teal gradient */
+  }
+  .alert {
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .alert-success {
+    background: #ECFDF5;
+    border-left: 4px solid #10B981;
+    color: #065F46;
+  }
+  .alert-danger {
+    background: #FEF2F2;
+    border-left: 4px solid #EF4444;
+    color: #991B1B;
+  }
+  .btn-close {
+    filter: brightness(0) saturate(100%) invert(19%) sepia(9%) saturate(2925%) hue-rotate(177deg) brightness(93%) contrast(89%);
+  }
+  .form-text {
+    color: #6B7280; /* Lighter gray */
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+  }
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="department-container" data-aos="fade-up">
+        <div class="form-header">
+          <h3><span>Add Department</span></h3>
+        </div>
+
+        {% with messages=get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                  <span>{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="/department" method="post">
+          <div class="form-group">
+            <label for="dept" class="form-label">Department Name</label>
+            <input type="text" class="form-control" name="dept" id="dept" placeholder="Enter department name" required>
+            <div class="form-text">Enter the name of the department to add</div>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-plus-circle me-2"></i> Add Department
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add floating labels effect
+    const input = document.getElementById('dept');
+    input.addEventListener('focus', function() {
+      this.parentElement.classList.add('focused');
+    });
+    input.addEventListener('blur', function() {
+      if (!this.value) {
+        this.parentElement.classList.remove('focused');
+      }
+    });
+    // Initialize focused state if value exists
+    if (input.value) {
+      input.parentElement.classList.add('focused');
+    }
+  });
+</script>
+{% endblock body %}

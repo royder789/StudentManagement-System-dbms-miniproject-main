@@ -1,0 +1,215 @@
+{% extends 'auth.html' %}
+{% block title %}Sign Up{% endblock title %}
+
+{% block style %}
+<style>
+  .auth-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 3rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .auth-container::before {
+    content: "";
+    position: absolute;
+    bottom: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: url('https://img.icons8.com/ios-filled/100/0F766E/add-user-male.png') no-repeat;
+    background-size: contain;
+    opacity: 0.05;
+    z-index: 0;
+  }
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+  .auth-header h1 {
+    color: #0F766E;
+    font-weight: 700;
+    font-size: 2.2rem;
+    position: relative;
+    display: inline-block;
+  }
+  .auth-header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #0F766E, #F59E0B);
+    border-radius: 2px;
+  }
+  .form-control {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    color: #1F2937;
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+  }
+  .form-control:focus {
+    background: white;
+    box-shadow: 0 0 0 0.25rem rgba(15, 118, 110, 0.25);
+    border-color: #0F766E;
+  }
+  .form-label {
+    font-weight: 500;
+    color: #1F2937;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .form-text {
+    color: #6B7280;
+    font-size: 0.85rem;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+  .signup-btn {
+    background: linear-gradient(135deg, #0F766E, #14B8A6);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 50px;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+  }
+  .signup-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(15, 118, 110, 0.4);
+  }
+  .auth-footer {
+    text-align: center;
+    color: #6B7280;
+    margin-top: 1.5rem;
+  }
+  .auth-footer a {
+    color: #0F766E;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+  .auth-footer a:hover {
+    color: #0D9488;
+    transform: translateX(5px);
+  }
+  .auth-footer a i {
+    margin-left: 8px;
+    transition: all 0.3s ease;
+  }
+  .auth-footer a:hover i {
+    transform: translateX(3px);
+  }
+  .password-strength {
+    height: 4px;
+    background: #E5E7EB;
+    border-radius: 2px;
+    margin-top: -10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .password-strength::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0;
+    background: #10B981;
+    transition: width 0.3s ease;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-header" data-aos="fade-down">
+    <h1><span>Create Account</span></h1>
+  </div>
+
+  {% with messages=get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{category}} alert-dismissible fade show" role="alert" data-aos="fade-up">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+            <span>{{ message }}</span>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form action="/signup" method="post" data-aos="fade-up" data-aos-delay="100">
+    <div class="form-group">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" name="username" id="username" required>
+    </div>
+
+    <div class="form-group">
+      <label for="exampleInputEmail1" class="form-label">Email Address</label>
+      <input type="email" class="form-control" id="exampleInputEmail1" name="email" aria-describedby="emailHelp" required>
+      <small id="emailHelp" class="form-text">We'll never share your email with anyone else.</small>
+    </div>
+    
+    <div class="form-group">
+      <label for="exampleInputPassword1" class="form-label">Password</label>
+      <input type="password" class="form-control" id="exampleInputPassword1" name="password" required>
+      <div class="password-strength" id="passwordStrength"></div>
+    </div>
+
+    <button type="submit" class="signup-btn">
+      <i class="fas fa-user-plus me-2"></i> Sign Up
+    </button>
+
+    <div class="auth-footer">
+      <p>Already have an account?</p>
+      <a href="/login">
+        Login now <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Password strength indicator
+  document.getElementById('exampleInputPassword1').addEventListener('input', function(e) {
+    const password = e.target.value;
+    const strengthBar = document.getElementById('passwordStrength');
+    let strength = 0;
+    
+    if (password.length > 0) strength += 1;
+    if (password.length >= 8) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    
+    const width = (strength / 5) * 100;
+    strengthBar.style.width = width + '%';
+    
+    // Change color based on strength
+    if (strength <= 2) {
+      strengthBar.style.backgroundColor = '#EF4444'; // red
+    } else if (strength <= 4) {
+      strengthBar.style.backgroundColor = '#F59E0B'; // amber
+    } else {
+      strengthBar.style.backgroundColor = '#10B981'; // green
+    }
+  });
+</script>
+{% endblock content %}

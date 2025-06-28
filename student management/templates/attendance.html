@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% block title %}
+Add Attendance
+{% endblock title %}
+
+{% block style %}
+<style>
+  .attendance-container {
+    background: #FFFFFF; /* White */
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  .attendance-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+  .form-header {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+  .form-header h3 {
+    font-weight: 700;
+    color: #0F766E; /* Teal */
+    position: relative;
+    display: inline-block;
+  }
+  .form-header h3::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #0F766E, #F59E0B); /* Teal to Amber */
+    border-radius: 3px;
+  }
+  .form-control {
+    background: #F9FAFB; /* Light Gray White */
+    border: 1px solid #E5E7EB;
+    color: #1F2937; /* Slate */
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+  }
+  .form-control:focus {
+    background: #FFFFFF;
+    box-shadow: 0 0 0 0.25rem rgba(15, 118, 110, 0.25); /* Teal with opacity */
+    border-color: #0F766E; /* Teal */
+    color: #1F2937; /* Slate */
+  }
+  .form-control::placeholder {
+    color: #9CA3AF; /* Gray */
+  }
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #1F2937; /* Slate */
+  }
+  .submit-btn {
+    background: linear-gradient(135deg, #0F766E, #14B8A6); /* Teal gradient */
+    border: none;
+    color: #FFFFFF; /* White */
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 50px;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(15, 118, 110, 0.3); /* Teal shadow */
+    background: linear-gradient(135deg, #0D9488, #0F766E); /* Darker teal gradient */
+  }
+  .input-group-text {
+    background-color: #F9FAFB; /* Light Gray White */
+    color: #1F2937; /* Slate */
+    border: 1px solid #E5E7EB;
+  }
+  .form-text {
+    color: #6B7280; /* Lighter gray */
+  }
+  select option {
+    background: #FFFFFF;
+    color: #1F2937; /* Slate */
+  }
+  .alert {
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .alert-success {
+    background: #ECFDF5;
+    border-left: 4px solid #10B981;
+    color: #065F46;
+  }
+  .alert-danger {
+    background: #FEF2F2;
+    border-left: 4px solid #EF4444;
+    color: #991B1B;
+  }
+  .btn-close {
+    filter: brightness(0) saturate(100%) invert(19%) sepia(9%) saturate(2925%) hue-rotate(177deg) brightness(93%) contrast(89%);
+  }
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="attendance-container" data-aos="fade-up">
+        <div class="form-header text-center">
+          <h3><span>Add Attendance Details</span></h3>
+        </div>
+
+        {% with messages=get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                  <span>{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="/addattendance" method="post">
+          <div class="mb-4">
+            <label for="rollno" class="form-label">Student Roll Number</label>
+            <select class="form-control form-select" id="rollno" name="rollno" required>
+              <option value="" disabled selected>Select Roll Number</option>
+              {% for r in query %}
+                <option value="{{r.rollno}}">{{r.rollno}}</option>
+              {% endfor %}
+            </select>
+            <div class="form-text">Select the student's roll number</div>
+          </div>
+
+          <div class="mb-4">
+            <label for="attend" class="form-label">Attendance Percentage</label>
+            <div class="input-group">
+              <input type="number" class="form-control" name="attend" id="attend" min="0" max="100" required>
+              <span class="input-group-text">%</span>
+            </div>
+            <div class="form-text">Enter percentage between 0-100</div>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-save me-2"></i> Add Attendance
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add animation to form elements
+  document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+      });
+      input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focused');
+      });
+    });
+
+    // Animate select options
+    const select = document.getElementById('rollno');
+    select.addEventListener('change', function() {
+      this.style.color = '#1F2937'; /* Slate */
+    });
+  });
+</script>
+{% endblock body %}

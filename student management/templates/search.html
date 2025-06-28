@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+{% block title %}
+Search
+{% endblock title %}
+
+{% block style %}
+<style>
+  .search-container {
+    background: #FFFFFF;
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+  }
+  .search-header {
+    position: relative;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  .search-header h3 {
+    font-weight: 700;
+    color: #0F766E; /* Teal */
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+  }
+  .search-header h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #0F766E, #F59E0B); /* Teal to Amber */
+    border-radius: 2px;
+  }
+  .search-form {
+    background: #F9FAFB; /* Light gray white */
+    border-radius: 15px;
+    padding: 2rem;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #1F2937; /* Slate */
+  }
+  .form-control {
+    background: #F9FAFB; /* Light gray white */
+    border: 1px solid #E5E7EB;
+    color: #1F2937; /* Slate */
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  .form-control:focus {
+    background: #FFFFFF;
+    box-shadow: 0 0 0 0.25rem rgba(15, 118, 110, 0.25); /* Teal with opacity */
+    color: #1F2937; /* Slate */
+    border-color: #0F766E; /* Teal */
+  }
+  .search-btn {
+    background: linear-gradient(135deg, #0F766E, #14B8A6); /* Teal gradient */
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 50px;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3); /* Teal shadow */
+  }
+  .search-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(15, 118, 110, 0.4); /* Teal shadow */
+  }
+  .results-container {
+    background: #F9FAFB; /* Light gray white */
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+  .results-header {
+    color: #0F766E; /* Teal */
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 10px;
+  }
+  .results-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #0F766E, #F59E0B); /* Teal to Amber */
+    border-radius: 2px;
+  }
+  .details-list {
+    list-style: none;
+    padding: 0;
+  }
+  .details-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #E5E7EB;
+    display: flex;
+  }
+  .details-list li:last-child {
+    border-bottom: none;
+  }
+  .detail-label {
+    font-weight: 600;
+    color: #0F766E; /* Teal */
+    min-width: 120px;
+    display: inline-block;
+  }
+  .detail-value {
+    color: #1F2937; /* Slate */
+    flex-grow: 1;
+  }
+  .no-results {
+    text-align: center;
+    color: #6B7280; /* Gray */
+    padding: 2rem;
+    font-style: italic;
+  }
+  .alert {
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(5px);
+  }
+  .alert-success {
+    background: #ECFDF5;
+    border-left: 4px solid #10B981;
+    color: #065F46;
+  }
+  .alert-danger {
+    background: #FEF2F2;
+    border-left: 4px solid #EF4444;
+    color: #991B1B;
+  }
+  .attendance-value {
+    font-weight: 600;
+    color: {% if attend and attend.attendance >= 75 %}#10B981{% elif attend and attend.attendance >= 50 %}#F59E0B{% else %}#EF4444{% endif %};
+  }
+  a.text-primary {
+    color: #0F766E !important; /* Teal */
+  }
+  a.text-primary:hover {
+    color: #0D9488 !important; /* Darker teal */
+  }
+</style>
+{% endblock style %}
+
+{% block body %}
+<div class="container py-4">
+  <div class="search-container">
+    <div class="search-header">
+      <h3><span>Search Your Details</span></h3>
+    </div>
+
+    {% with messages=get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{category}} alert-dismissible fade show">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+              <span>{{ message }}</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="search-form">
+          <form action="/search" method="post">
+            <div class="form-group">
+              <label for="roll" class="form-label">Enter Your Roll Number</label>
+              <input type="text" class="form-control" name="roll" id="roll" placeholder="Use small letters" required>
+            </div>
+            <button type="submit" class="search-btn">
+              <i class="fas fa-search me-2"></i> Search
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        {% if bio %}
+          <div class="results-container">
+            <h4 class="results-header">Your Details</h4>
+            <ul class="details-list">
+              <li>
+                <span class="detail-label">Roll No:</span>
+                <span class="detail-value">{{ bio.rollno }}</span>
+              </li>
+              <li>
+                <span class="detail-label">Name:</span>
+                <span class="detail-value">{{ bio.sname }}</span>
+              </li>
+              <li>
+                <span class="detail-label">Semester:</span>
+                <span class="detail-value">{{ bio.sem }}</span>
+              </li>
+              <li>
+                <span class="detail-label">Gender:</span>
+                <span class="detail-value">
+                  <i class="fas fa-{{ 'mars' if bio.gender|lower == 'male' else 'venus' }} me-2"></i>
+                  {{ bio.gender }}
+                </span>
+              </li>
+              <li>
+                <span class="detail-label">Branch:</span>
+                <span class="detail-value">{{ bio.branch }}</span>
+              </li>
+              <li>
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">
+                  <a href="mailto:{{ bio.email }}" class="text-primary">{{ bio.email }}</a>
+                </span>
+              </li>
+              <li>
+                <span class="detail-label">Phone:</span>
+                <span class="detail-value">
+                  <a href="tel:{{ bio.number }}" class="text-primary">{{ bio.number }}</a>
+                </span>
+              </li>
+              <li>
+                <span class="detail-label">Address:</span>
+                <span class="detail-value">{{ bio.address }}</span>
+              </li>
+            </ul>
+
+            <h4 class="results-header mt-4">Attendance Status</h4>
+            <ul class="details-list">
+              <li>
+                <span class="detail-label">Attendance:</span>
+                <span class="detail-value attendance-value">
+                  {% if attend %}
+                    {{ attend.attendance }}%
+                    <i class="fas fa-{% if attend.attendance >= 75 %}check-circle text-success{% elif attend.attendance >= 50 %}exclamation-circle text-warning{% else %}times-circle text-danger{% endif %} ms-2"></i>
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </span>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          <div class="results-container">
+            <div class="no-results">
+              <i class="fas fa-search fa-2x mb-3" style="color: #E5E7EB;"></i>
+              <p>No results found</p>
+              <p class="small">Enter your roll number to search your details</p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to results when they appear
+    if (document.querySelector('.details-list')) {
+      const items = document.querySelectorAll('.details-list li');
+      items.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(20px)';
+        item.style.transition = `all 0.3s ease ${index * 0.05}s`;
+        
+        setTimeout(() => {
+          item.style.opacity = '1';
+          item.style.transform = 'translateX(0)';
+        }, 100);
+      });
+    }
+  });
+</script>
+{% endblock body %}
