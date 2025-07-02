@@ -92,13 +92,7 @@ StudentManagement-System-dbms-miniproject-main/
 
 ## 📸 Screenshots
 
-> *Place your screenshots in `assets/images/` and update paths below.*
 
-![Dashboard Overview](assets/images/dashboard_overview.png)
-
-![Student List](assets/images/student_list.png)
-
-![Add New Student](assets/images/add_student.png)
 
 ## 🚀 Future Enhancements
 
